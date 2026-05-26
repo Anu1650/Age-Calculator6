@@ -1,0 +1,1006 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Age Calculator - Global Age Systems</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --highlight-color: #2c3e50;
+            --text-color: #333;
+            --light-gray: #f8f9fa;
+            --medium-gray: #ced4da;
+            --dark-gray: #495057;
+            --white: #ffffff;
+            --success-color: #2ecc71;
+            --error-color: #e74c3c;
+            --warning-color: #f39c12;
+            --footer-bg: #2c3e50;
+            --info-color: #17a2b8;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: var(--light-gray);
+            color: var(--text-color);
+            line-height: 1.6;
+            scroll-behavior: smooth;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            color: var(--highlight-color);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: var(--dark-gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .calculator-container {
+            background-color: var(--white);
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            flex-grow: 1;
+        }
+
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-gray);
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid var(--medium-gray);
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+        }
+
+        button {
+            background-color: var(--primary-color);
+            color: var(--white);
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        #download-btn {
+            background-color: var(--success-color);
+            margin-top: 20px;
+            display: none;
+        }
+
+        #download-btn:hover {
+            background-color: #27ae60;
+        }
+
+        .result-section {
+            margin-top: 20px;
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+            scroll-margin-top: 20px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .result-title {
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: var(--highlight-color);
+            font-size: 1.3em;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 8px;
+        }
+
+        .result-step {
+            display: flex;
+            margin-bottom: 15px;
+            align-items: center;
+            padding: 12px;
+            border-radius: 6px;
+            transition: background-color 0.2s;
+        }
+
+        .result-step:hover {
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .step-number {
+            background-color: var(--primary-color);
+            color: var(--white);
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 14px;
+            flex-shrink: 0;
+            font-weight: 600;
+        }
+
+        .step-text {
+            flex-grow: 1;
+            font-size: 16px;
+        }
+
+        .highlight {
+            font-weight: 600;
+            color: var(--highlight-color);
+            margin-left: 5px;
+        }
+
+        .unit {
+            color: var(--dark-gray);
+            font-size: 0.9em;
+            margin-left: 3px;
+        }
+
+        .calendar-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            display: none;
+            scroll-margin-top: 20px;
+        }
+
+        .calendar {
+            background-color: var(--white);
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .calendar-title {
+            text-align: center;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--highlight-color);
+            font-size: 1.1em;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 5px;
+            text-align: center;
+        }
+
+        .calendar-header {
+            font-weight: 600;
+            padding: 8px 0;
+            color: var(--dark-gray);
+            font-size: 0.9em;
+        }
+
+        .calendar-day {
+            padding: 8px 0;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .calendar-day.empty {
+            visibility: hidden;
+        }
+
+        .calendar-day.today {
+            background-color: var(--primary-color);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        .calendar-day.birthday {
+            background-color: var(--error-color);
+            color: var(--white);
+            font-weight: 600;
+        }
+
+        /* Website Stamp Styles */
+        .website-stamp {
+            text-align: center;
+            margin-top: 30px;
+            padding: 15px;
+            border-top: 2px solid var(--primary-color);
+            color: var(--dark-gray);
+            font-style: italic;
+        }
+
+        .website-stamp .logo {
+            font-weight: bold;
+            color: var(--primary-color);
+            font-size: 1.2em;
+        }
+
+        /* Advertisement Styles */
+        .ad-container {
+            position: relative;
+            margin: 30px 0;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            background-color: var(--white);
+        }
+
+        .ad-close-btn {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: rgba(0,0,0,0.5);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s;
+        }
+
+        .ad-close-btn:hover {
+            background: rgba(0,0,0,0.7);
+            transform: scale(1.1);
+        }
+
+        .ad-carousel {
+            max-height: 300px;
+        }
+
+        .ad-carousel .carousel-item {
+            height: 300px;
+        }
+
+        .ad-carousel .carousel-item img {
+            object-fit: cover;
+            height: 100%;
+            width: 100%;
+        }
+
+        .ad-carousel .carousel-caption {
+            background: rgba(0,0,0,0.6);
+            border-radius: 5px;
+            padding: 10px;
+        }
+
+        .ad-carousel .carousel-caption h5 {
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* Footer Styles */
+        .footer {
+            background-color: var(--footer-bg);
+            color: var(--white);
+            padding: 40px 20px;
+            margin-top: 40px;
+            border-radius: 10px;
+        }
+
+        .footer-content {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .footer-section {
+            margin-bottom: 30px;
+        }
+
+        .footer-section h2 {
+            color: var(--white);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .footer-section h2::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 60px;
+            height: 3px;
+            background-color: var(--primary-color);
+        }
+
+        .footer-section h3 {
+            color: var(--white);
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .footer-section p {
+            margin-bottom: 15px;
+            opacity: 0.9;
+            line-height: 1.7;
+        }
+
+        .footer-section ul {
+            margin-left: 20px;
+            margin-bottom: 15px;
+        }
+
+        .footer-section li {
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+
+        .footer-section .example {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            border-radius: 6px;
+            margin: 15px 0;
+            border-left: 4px solid var(--primary-color);
+        }
+
+        .footer-section .example p {
+            margin-bottom: 10px;
+        }
+
+        .footer-section .divider {
+            height: 1px;
+            background-color: rgba(255, 255, 255, 0.2);
+            margin: 25px 0;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 20px;
+            margin-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .calculator-container {
+                padding: 20px;
+            }
+
+            .step-number {
+                width: 24px;
+                height: 24px;
+                margin-right: 12px;
+            }
+
+            .calendar-section {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .footer-section h2::after {
+                left: 50%;
+                transform: translateX(-50%);
+            }
+
+            .ad-carousel {
+                max-height: 200px;
+            }
+
+            .ad-carousel .carousel-item {
+                height: 200px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Advertisement Carousel -->
+    <div class="ad-container" id="ad-container">
+        <button class="ad-close-btn" id="ad-close-btn">×</button>
+        <div id="adCarousel" class="carousel slide ad-carousel" data-bs-ride="carousel" data-bs-interval="5000">
+            <div class="carousel-indicators">
+                <button type="button" data-bs-target="#adCarousel" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                <button type="button" data-bs-target="#adCarousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                <button type="button" data-bs-target="#adCarousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+                <div class="carousel-item active">
+                    <img src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" class="d-block w-100" alt="Advertisement 1">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Special Offer!</h5>
+                        <p>Get 50% off on our premium age tracking services.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" class="d-block w-100" alt="Advertisement 2">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>New Features!</h5>
+                        <p>Track your age across different cultural systems.</p>
+                    </div>
+                </div>
+                <div class="carousel-item">
+                    <img src="https://images.unsplash.com/photo-1551434678-e076c223a692?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1170&q=80" class="d-block w-100" alt="Advertisement 3">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>Download Now!</h5>
+                        <p>Get our mobile app for age tracking on the go.</p>
+                    </div>
+                </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#adCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#adCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <div class="header">
+        <h1>Age Calculator</h1>
+        <p>The Age Calculator can determine the age or interval between two dates. The calculated age will be displayed in years, months, weeks, days, hours, minutes, seconds, and milliseconds. The result can also be downloaded from this website with 100% accuracy.</p>
+    </div>
+
+    <div class="calculator-container">
+        <div class="input-section">
+            <div class="input-group">
+                <label for="name">Name</label>
+                <input type="text" id="name" placeholder="Enter your name">
+            </div>
+            <div class="input-group">
+                <label for="birth-day">Day</label>
+                <input type="number" id="birth-day" min="1" max="31" placeholder="DD">
+            </div>
+            <div class="input-group">
+                <label for="birth-month">Month</label>
+                <select id="birth-month">
+                    <option value="">Select Month</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label for="birth-year">Year</label>
+                <input type="number" id="birth-year" min="1900" max="2100" placeholder="YYYY">
+            </div>
+        </div>
+
+        <button id="calculate-btn">Calculate My Age</button>
+
+        <div class="result-section" id="result-section">
+            <div class="result-title">Age Calculation Results for <span id="person-name"></span></div>
+
+            <div class="result-step">
+                <div class="step-number">1</div>
+                <div class="step-text">Complete Age: <span class="highlight" id="age-result"></span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">2</div>
+                <div class="step-text">Total: <span class="highlight" id="years-result"></span><span class="unit">years</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">3</div>
+                <div class="step-text">Total: <span class="highlight" id="months-result"></span><span class="unit">months</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">4</div>
+                <div class="step-text">Total: <span class="highlight" id="weeks-result"></span><span class="unit">weeks</span> and <span class="highlight" id="remaining-days-result"></span><span class="unit">days</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">5</div>
+                <div class="step-text">Total: <span class="highlight" id="days-result"></span><span class="unit">days</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">6</div>
+                <div class="step-text">Total: <span class="highlight" id="hours-result"></span><span class="unit">hours</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">7</div>
+                <div class="step-text">Total: <span class="highlight" id="minutes-result"></span><span class="unit">minutes</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">8</div>
+                <div class="step-text">Total: <span class="highlight" id="seconds-result"></span><span class="unit">seconds</span></div>
+            </div>
+
+            <div class="result-step">
+                <div class="step-number">9</div>
+                <div class="step-text">Total: <span class="highlight" id="milliseconds-result"></span><span class="unit">milliseconds</span></div>
+            </div>
+            
+            <button id="download-btn">Download Results</button>
+        </div>
+
+        <div class="calendar-section" id="calendar-section">
+            <div class="calendar" id="birth-calendar">
+                <div class="calendar-title" id="birth-calendar-title"></div>
+                <div class="calendar-grid" id="birth-calendar-grid"></div>
+            </div>
+            <div class="calendar" id="current-calendar">
+                <div class="calendar-title" id="current-calendar-title"></div>
+                <div class="calendar-grid" id="current-calendar-grid"></div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h2>🌍 Age Calculator – How Age Is Counted in Different Cultures</h2>
+                <p>The Age Calculator helps you find your exact age based on the most common global age system. In this standard system, your age increases every year on your birthday.</p>
+                
+                <div class="example">
+                    <p>👉 For example, if a person has lived 3 years and 11 months, their age is considered 3 years, and it increases to 4 years on their next birthday.</p>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>🎂 Western Age System</h3>
+                <p>Most Western countries use this birthday-based system. Your age changes only once each year — on the date you were born.</p>
+            </div>
+            
+            <div class="footer-section">
+                <h3>🏮 Traditional Chinese Age System</h3>
+                <p>In some cultures, age is counted differently. For example, in one traditional Chinese age system:</p>
+                <ul>
+                    <li>A baby is considered 1 year old at birth.</li>
+                    <li>Everyone's age increases together on the Traditional Chinese New Year, not on their birthday.</li>
+                </ul>
+                
+                <div class="example">
+                    <p>So, if a baby is born one day before Chinese New Year, two days later that baby will already be considered 2 years old, even though they are only 2 days old!</p>
+                </div>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="footer-section">
+                <h3>📅 How Month and Day Calculation Works</h3>
+                <p>Sometimes, the months and days in age calculations can appear confusing — especially when the starting date is at the end of a month.</p>
+                
+                <div class="example">
+                    <p>From Feb 20 to Mar 20 = 1 month.</p>
+                    <p>But from Feb 28, 2022 to Mar 31, 2022, there are two valid ways to count:</p>
+                    <ul>
+                        <li>(1) Feb 28 → Mar 28 = 1 month, so total 1 month and 3 days</li>
+                        <li>(2) Treat both as end-of-month dates, which makes it exactly 1 month</li>
+                    </ul>
+                </div>
+                
+                <p>Both methods are logically correct, but due to the uneven number of days in months, slight differences may appear.</p>
+                <p>In this calculator, we use the first method (Feb 28 → Mar 28) to ensure accuracy.</p>
+            </div>
+            
+            <div class="divider"></div>
+            
+            <div class="footer-section">
+                <h3>🧮 Use This Age Calculator to:</h3>
+                <ul>
+                    <li>Find your exact age in years, months, and days</li>
+                    <li>Understand different cultural age systems</li>
+                    <li>Compare Western vs. East Asian age counting</li>
+                    <li>Learn how end-of-month date differences affect your age results</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 Age Calculator. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const nameInput = document.getElementById('name');
+            const dayInput = document.getElementById('birth-day');
+            const monthInput = document.getElementById('birth-month');
+            const yearInput = document.getElementById('birth-year');
+            const calculateBtn = document.getElementById('calculate-btn');
+            const downloadBtn = document.getElementById('download-btn');
+            const resultSection = document.getElementById('result-section');
+            const calendarSection = document.getElementById('calendar-section');
+            const personNameElement = document.getElementById('person-name');
+            const adContainer = document.getElementById('ad-container');
+            const adCloseBtn = document.getElementById('ad-close-btn');
+
+            // Store birth date for download functionality
+            let currentBirthDate = null;
+            let currentToday = null;
+
+            // Event listeners
+            calculateBtn.addEventListener('click', calculateAgeHandler);
+            downloadBtn.addEventListener('click', downloadResults);
+            adCloseBtn.addEventListener('click', closeAd);
+
+            // Allow Enter key to trigger calculation
+            [nameInput, dayInput, monthInput, yearInput].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        calculateAgeHandler();
+                    }
+                });
+            });
+
+            function closeAd() {
+                adContainer.style.display = 'none';
+            }
+
+            function calculateAgeHandler() {
+                // Get input values
+                const name = nameInput.value.trim();
+                const day = parseInt(dayInput.value);
+                const month = parseInt(monthInput.value);
+                const year = parseInt(yearInput.value);
+
+                // Validate name
+                if (!name) {
+                    alert('Please enter your name');
+                    return;
+                }
+
+                // Validate date
+                if (isNaN(day) || isNaN(month) || isNaN(year) || month < 1 || month > 12) {
+                    alert('Please enter a valid complete date');
+                    return;
+                }
+
+                // Validate day based on month
+                const daysInMonth = new Date(year, month, 0).getDate();
+                if (day < 1 || day > daysInMonth) {
+                    alert(`Please enter a valid day (1-${daysInMonth}) for the selected month`);
+                    return;
+                }
+
+                // Create date objects
+                const birthDate = new Date(year, month - 1, day);
+                const today = new Date();
+
+                // Store dates for download
+                currentBirthDate = birthDate;
+                currentToday = today;
+
+                // Validate date
+                if (birthDate > today) {
+                    alert('Birth date cannot be in the future');
+                    return;
+                }
+
+                // Display person's name
+                personNameElement.textContent = name;
+
+                // Calculate age
+                calculateAge(birthDate, today);
+
+                // Generate calendars
+                generateCalendar(birthDate, 'birth-calendar', 'birthday');
+                generateCalendar(today, 'current-calendar', 'today');
+
+                // Show results
+                resultSection.style.display = 'block';
+                calendarSection.style.display = 'grid';
+                downloadBtn.style.display = 'block';
+
+                // Scroll to results
+                setTimeout(() => {
+                    resultSection.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }, 100);
+            }
+
+            function calculateAge(birthDate, currentDate) {
+                let years = currentDate.getFullYear() - birthDate.getFullYear();
+                let months = currentDate.getMonth() - birthDate.getMonth();
+                let days = currentDate.getDate() - birthDate.getDate();
+
+                // Adjust for negative months or days
+                if (months < 0 || (months === 0 && days < 0)) {
+                    years--;
+                    months += 12;
+                }
+
+                if (days < 0) {
+                    const lastMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 0).getDate();
+                    months--;
+                    days += lastMonth;
+                }
+
+                // Calculate total time
+                const timeDiff = currentDate - birthDate;
+                const totalDays = Math.floor(timeDiff / (1000 * 60 * 60 * 24));
+                const totalHours = Math.floor(timeDiff / (1000 * 60 * 60));
+                const totalMinutes = Math.floor(timeDiff / (1000 * 60));
+                const totalSeconds = Math.floor(timeDiff / 1000);
+                const totalMilliseconds = timeDiff;
+                const totalWeeks = Math.floor(totalDays / 7);
+                const remainingDays = totalDays % 7;
+                const totalMonths = years * 12 + months;
+
+                // Format numbers with commas
+                const formatNumber = num => num.toLocaleString();
+
+                // Display results
+                document.getElementById('age-result').textContent = `${years} years, ${months} months, ${days} days`;
+                document.getElementById('years-result').textContent = formatNumber(years);
+                document.getElementById('months-result').textContent = formatNumber(totalMonths);
+                document.getElementById('weeks-result').textContent = formatNumber(totalWeeks);
+                document.getElementById('remaining-days-result').textContent = remainingDays;
+                document.getElementById('days-result').textContent = formatNumber(totalDays);
+                document.getElementById('hours-result').textContent = formatNumber(totalHours);
+                document.getElementById('minutes-result').textContent = formatNumber(totalMinutes);
+                document.getElementById('seconds-result').textContent = formatNumber(totalSeconds);
+                document.getElementById('milliseconds-result').textContent = formatNumber(totalMilliseconds);
+            }
+
+            function generateCalendar(date, elementId, highlightClass) {
+                const year = date.getFullYear();
+                const month = date.getMonth();
+                const day = date.getDate();
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                                  "July", "August", "September", "October", "November", "December"];
+
+                // Set calendar title
+                document.getElementById(`${elementId}-title`).textContent =
+                    `${monthNames[month]} ${year}`;
+
+                // Get first day of month and total days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                // Clear previous calendar
+                const grid = document.getElementById(`${elementId}-grid`);
+                grid.innerHTML = '';
+
+                // Add day headers
+                const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                dayNames.forEach(d => {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-header';
+                    dayElement.textContent = d;
+                    grid.appendChild(dayElement);
+                });
+
+                // Add empty cells for days before the first day of month
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyElement = document.createElement('div');
+                    emptyElement.className = 'calendar-day empty';
+                    grid.appendChild(emptyElement);
+                }
+
+                // Add days of month
+                for (let i = 1; i <= daysInMonth; i++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day';
+                    dayElement.textContent = i;
+
+                    // Highlight current day or birthday
+                    const today = new Date();
+                    const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear() && highlightClass === 'today';
+                    const isBirthday = i === day && highlightClass === 'birthday';
+
+                    if (isToday) {
+                        dayElement.classList.add('today');
+                    }
+                    if (isBirthday) {
+                        dayElement.classList.add('birthday');
+                    }
+
+                    grid.appendChild(dayElement);
+                }
+            }
+
+            function downloadResults() {
+                const name = nameInput.value.trim();
+                
+                if (!currentBirthDate || !currentToday) {
+                    alert('Please calculate your age first before downloading');
+                    return;
+                }
+
+                // Generate fresh calendars for download
+                const birthCalendarHTML = generateCalendarHTML(currentBirthDate, 'birthday');
+                const currentCalendarHTML = generateCalendarHTML(currentToday, 'today');
+
+                // Create a copy of the results HTML without the download button
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = document.getElementById('result-section').innerHTML;
+                tempDiv.querySelector('#download-btn').remove();
+                
+                // Add website stamp
+                const websiteStamp = document.createElement('div');
+                websiteStamp.className = 'website-stamp';
+                websiteStamp.innerHTML = '<p>Generated by <span class="logo">AgeCalculator.com</span> on ' + new Date().toLocaleDateString() + '</p>';
+                tempDiv.appendChild(websiteStamp);
+
+                const content = `
+                    <!DOCTYPE html>
+                    <html lang="en">
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Age Calculation Results for ${name}</title>
+                        <style>
+                            ${document.querySelector('style').innerHTML}
+                            #download-btn { display: none; }
+                            .website-stamp {
+                                text-align: center;
+                                margin-top: 30px;
+                                padding: 15px;
+                                border-top: 2px solid #3498db;
+                                color: #495057;
+                                font-style: italic;
+                            }
+                            .website-stamp .logo {
+                                font-weight: bold;
+                                color: #3498db;
+                                font-size: 1.2em;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <div class="header">
+                            <h1>Age Calculation Results for ${name}</h1>
+                            <p>Generated on ${new Date().toLocaleDateString()}</p>
+                        </div>
+                        <div class="calculator-container">
+                            <div class="result-section" style="display:block;">${tempDiv.innerHTML}</div>
+                            <div class="calendar-section" style="display:grid;">
+                                <div class="calendar">
+                                    <div class="calendar-title">${getMonthYearString(currentBirthDate)}</div>
+                                    <div class="calendar-grid">${birthCalendarHTML}</div>
+                                </div>
+                                <div class="calendar">
+                                    <div class="calendar-title">${getMonthYearString(currentToday)}</div>
+                                    <div class="calendar-grid">${currentCalendarHTML}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </body>
+                    </html>
+                `;
+
+                const blob = new Blob([content], { type: 'text/html' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `age-calculation-results-${name.replace(/\s+/g, '-')}.html`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+
+            // Helper function to generate calendar HTML for download
+            function generateCalendarHTML(date, highlightClass) {
+                const year = date.getFullYear();
+                const month = date.getMonth();
+                const day = date.getDate();
+                
+                // Get first day of month and total days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+
+                let calendarHTML = '';
+                
+                // Add day headers
+                const dayNames = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+                dayNames.forEach(d => {
+                    calendarHTML += `<div class="calendar-header">${d}</div>`;
+                });
+
+                // Add empty cells for days before the first day of month
+                for (let i = 0; i < firstDay; i++) {
+                    calendarHTML += `<div class="calendar-day empty"></div>`;
+                }
+
+                // Add days of month
+                for (let i = 1; i <= daysInMonth; i++) {
+                    let dayClass = 'calendar-day';
+                    
+                    // Highlight current day or birthday
+                    const today = new Date();
+                    const isToday = i === today.getDate() && month === today.getMonth() && year === today.getFullYear() && highlightClass === 'today';
+                    const isBirthday = i === day && highlightClass === 'birthday';
+
+                    if (isToday) {
+                        dayClass += ' today';
+                    }
+                    if (isBirthday) {
+                        dayClass += ' birthday';
+                    }
+
+                    calendarHTML += `<div class="${dayClass}">${i}</div>`;
+                }
+
+                return calendarHTML;
+            }
+
+            // Helper function to get month and year string
+            function getMonthYearString(date) {
+                const monthNames = ["January", "February", "March", "April", "May", "June",
+                                  "July", "August", "September", "October", "November", "December"];
+                return `${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+            }
+        });
+    </script>
+
+    <script src="https://pl29557265.effectivecpmnetwork.com/ca/95/f4/ca95f4c5b2e37e5c3a9db9d6626e163f.js"></script>
+</body>
+</html>
